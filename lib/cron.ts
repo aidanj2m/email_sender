@@ -64,12 +64,23 @@ export async function runCronBatch(config: SenderConfig): Promise<{
     sentRecipients.forEach((r) => sentEmails.add(r.email));
   }
 
-  // Get active contacts not yet emailed by this sender (FIFO by created_at)
-  const allContacts = await dbQuery("contacts", {
-    select: "id,email,name,company_name",
+  // Get active contacts not yet emailed by this sender
+  // Prioritize contacts with phone numbers (higher conversion), then by created_at
+  const contactsWithPhone = await dbQuery("contacts", {
+    select: "id,email,name,company_name,phone",
     status: "eq.active",
+    phone: "not.is.null",
     order: "created_at.asc",
-  }) as { id: string; email: string; name: string | null; company_name: string | null }[];
+  }) as { id: string; email: string; name: string | null; company_name: string | null; phone: string | null }[];
+
+  const contactsWithoutPhone = await dbQuery("contacts", {
+    select: "id,email,name,company_name,phone",
+    status: "eq.active",
+    phone: "is.null",
+    order: "created_at.asc",
+  }) as { id: string; email: string; name: string | null; company_name: string | null; phone: string | null }[];
+
+  const allContacts = [...contactsWithPhone, ...contactsWithoutPhone];
 
   const queue = allContacts.filter((c) => !sentEmails.has(c.email));
 
