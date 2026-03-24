@@ -2,7 +2,7 @@ import { Resend } from "resend";
 import { dbQuery, dbInsert, dbUpdate } from "@/lib/supabase";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const BATCH_SIZE = 5;
+const BATCH_SIZE = 10;
 
 export interface Attachment {
   filename: string;
