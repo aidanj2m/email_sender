@@ -108,8 +108,8 @@ export async function runCronBatch(config: SenderConfig): Promise<{
   const errors: { email: string; error: string }[] = [];
   let sent = 0;
 
-  await Promise.all(
-    batch.map(async (contact) => {
+  for (const contact of batch) {
+    {
       const recipientId = recipientMap.get(contact.email)!;
       const html = config.buildHtml({
         recipientName: contact.name ?? undefined,
@@ -146,8 +146,10 @@ export async function runCronBatch(config: SenderConfig): Promise<{
         });
         errors.push({ email: contact.email, error: msg });
       }
-    })
-  );
+    }
+    // Respect Resend's 5 req/sec rate limit
+    await new Promise((r) => setTimeout(r, 250));
+  }
 
   await dbUpdate("campaigns", { id: campaignId }, {
     status: errors.length === batch.length ? "failed" : "sent",
