@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/aidan",
+      "schedule": "0 14-22 * * 1-5"
+    },
+    {
+      "path": "/api/cron/ayan",
+      "schedule": "0 14-22 * * 1-5"
+    }
+  ]
+}
