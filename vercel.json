@@ -1,11 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/cron/aidan",
-      "schedule": "0 14-22 * * 1-5"
-    },
-    {
-      "path": "/api/cron/ayan",
+      "path": "/api/cron/all",
       "schedule": "0 14-22 * * 1-5"
     }
   ]
