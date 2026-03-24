@@ -1,6 +1,6 @@
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_KEY = process.env.SUPABASE_KEY!;
-const SCHEMA = "public";
+const SCHEMA = "email_sender";
 
 function headers(method: string): Record<string, string> {
   const h: Record<string, string> = {
