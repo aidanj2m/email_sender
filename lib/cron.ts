@@ -47,16 +47,15 @@ export async function runCronBatch(config: SenderConfig): Promise<{
   remaining: number;
   errors: { email: string; error: string }[];
 }> {
-  // Get campaigns already sent by this sender to build exclusion list
-  const senderCampaigns = await dbQuery("campaigns", {
+  // Get all emails that have already been sent by ANY sender
+  const allCampaigns = await dbQuery("campaigns", {
     select: "id",
-    from_email: `eq.${config.fromEmail}`,
   }) as { id: string }[];
 
   const sentEmails = new Set<string>();
 
-  if (senderCampaigns.length > 0) {
-    const campaignIds = senderCampaigns.map((c) => c.id).join(",");
+  if (allCampaigns.length > 0) {
+    const campaignIds = allCampaigns.map((c) => c.id).join(",");
     const sentRecipients = await dbQuery("campaign_recipients", {
       select: "email",
       campaign_id: `in.(${campaignIds})`,
